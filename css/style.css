@@ -1,0 +1,36 @@
+/* Default WooCommerce Product Grid Styling */
+.products {
+    display: grid;
+    grid-gap: 20px;
+    grid-template-columns: repeat(4, 1fr); /* This will be overridden by the PHP code for desktop */
+}
+
+/* Tablet */
+@media (max-width: 1024px) and (min-width: 768px) {
+    .elementor-widget-custom-woocommerce-products .products {
+        grid-template-columns: repeat(3, 1fr); /* 3 as an example, adjust as needed */
+    }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+    .elementor-widget-custom-woocommerce-products .products {
+        grid-template-columns: repeat(2, 1fr); /* 2 as an example, adjust as needed */
+    }
+}
+
+/* This CSS is to make sure the product images resize gracefully */
+.products .product {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.products .product img {
+    max-width: 100%;
+    height: auto;
+}
+
+.products .product .woocommerce-loop-product__title {
+    margin: 10px 0;
+}
