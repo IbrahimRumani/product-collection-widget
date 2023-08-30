@@ -1,4 +1,4 @@
-=== Product Collection WooCommerce Elementor Widget ===
+=== Product Collection Widget ===
 Contributors: infobahntechnologies
 Tags: elementor, woocommerce, widget
 Requires at least: 5.5
