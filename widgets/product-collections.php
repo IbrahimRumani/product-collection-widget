@@ -5,25 +5,23 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
 /**
  * Register Custom WooCommerce Widget for Elementor
  */
-add_action('elementor/widgets/widgets_registered', 'register_custom_woocommerce_widget');
+add_action('elementor/widgets/widgets_registered', 'ibt_register_woocommerce_widget');
 
-function register_custom_woocommerce_widget() {
+function ibt_register_woocommerce_widget() {
     if (!did_action('elementor/loaded')) {
         return;
     }
 
     if (class_exists('\Elementor\Widget_Base')) {
 
-        class Custom_WooCommerce_Elementor_Widget extends \Elementor\Widget_Base {
-
-            // [Widget properties, controls, render methods here...]
+        class ibt_WooCommerce_Elementor_Widget extends \Elementor\Widget_Base {
 
             public function get_name() {
-                return 'custom-woocommerce-products';
+                return 'ibt-woocommerce-products';
             }
 
             public function get_title() {
-                return __('Product Collections', 'text-domain');
+                return esc_html__('Product Collections', 'ibt-text-domain');
             }
 
             public function get_icon() {
@@ -36,21 +34,22 @@ function register_custom_woocommerce_widget() {
 
             protected function _register_controls() {
                 // Enqueue and localize the JavaScript for this control
-                wp_enqueue_script('custom-woocommerce-elementor-ajax', plugin_dir_url(dirname(__FILE__)) . 'js/ajax.js', ['jquery'], '1.0', true);
-                wp_localize_script('custom-woocommerce-elementor-ajax', 'customWooElementor', ['ajaxurl' => admin_url('admin-ajax.php')]);
+                wp_enqueue_script('ibt-woocommerce-elementor-ajax', plugin_dir_url(dirname(__FILE__)) . 'js/ajax.js', ['jquery'], '1.0', true);
+                wp_localize_script('ibt-woocommerce-elementor-ajax', 'ibtWooElementor', ['ajaxurl' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('ibt_woo_elementor')]);
 
+                // [Add controls here - Example control added]
                 $this->start_controls_section(
                     'content_section',
                     [
-                        'label' => __('Settings', 'text-domain'),
+                        'label' => esc_html__('Settings', 'ibt-text-domain'),
                         'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
                     ]
-                );                          
+                );
 
                 $this->add_control(
                     'number_of_products',
                     [
-                        'label' => __('Number of Products', 'text-domain'),
+                        'label' => esc_html__('Number of Products', 'ibt-text-domain'),
                         'type' => \Elementor\Controls_Manager::NUMBER,
                         'min' => 1,
                         'max' => 100,
@@ -58,7 +57,7 @@ function register_custom_woocommerce_widget() {
                     ]
                 );
 
-                $this->add_responsive_control(
+$this->add_responsive_control(
                     'columns',
                     [
                         'label' => __('Columns', 'text-domain'),
@@ -288,115 +287,109 @@ function register_custom_woocommerce_widget() {
                         'raw'     => '<div style="margin:0; background-color: #f7d08a; padding: 10px 15px; border-left: 4px solid #f5a623; color: #6a3403; font-style:normal; "><strong>Read Me First:</strong>1. Incase of some themes, the appearance might be distorted in the editor. However, if you refresh and view the actual page, it should display correctly.<br>2. Some themes might be able to over ride these settings.</div>',
                         'content_classes' => 'elementor-descriptor',
                     ]
-                );              
+                );                 
+
+                // [Add more controls as needed]
 
                 $this->end_controls_section();
-
             }
 
-            protected function render() {
-                
-$settings = $this->get_settings_for_display();
+protected function render() {
+    $settings = $this->get_settings_for_display();
 
-    $style = '<style>';
+    // Dynamic inline styles based on widget settings
+    $dynamic_styles = '<style>';
 
-    if ($settings['show_title'] !== 'yes') {
-        $style .= '.woocommerce ul.products li.product .woocommerce-loop-product__title { display: none; }';
+    if ('yes' !== $settings['show_title']) {
+        $dynamic_styles .= '{{WRAPPER}} .woocommerce-loop-product__title { display: none; }';
     }
-    if ($settings['show_price'] !== 'yes') {
-        $style .= '.woocommerce ul.products li.product .price { display: none; }';
+    if ('yes' !== $settings['show_price']) {
+        $dynamic_styles .= '{{WRAPPER}} .woocommerce ul.products li.product .price { display: none; }';
     }
-    if ($settings['show_add_to_cart'] !== 'yes') {
-        $style .= '.woocommerce ul.products li.product .add_to_cart_button, .woocommerce ul.products li.product .button { display: none; }';
-    }           
-    if ($settings['hide_sale_badge'] === 'yes') {
-        $style .= '.woocommerce span.onsale { display: none; }';
+    if ('yes' !== $settings['show_add_to_cart']) {
+        $dynamic_styles .= '{{WRAPPER}} .woocommerce ul.products li.product .add_to_cart_button, {{WRAPPER}} .woocommerce ul.products li.product .button { display: none; }';
+    }
+    if ('yes' === $settings['hide_sale_badge']) {
+        $dynamic_styles .= '{{WRAPPER}} .woocommerce ul.products li.product span.onsale { display: none; }';
     }
 
-                
+    $dynamic_styles .= '</style>';
+    echo $dynamic_styles;
 
-    $style .= '</style>';
+    // Building the WooCommerce shortcode based on settings
+    $columns = intval($settings['columns']);
+    $number_of_products = intval($settings['number_of_products']);
+    $product_type = $settings['product_type'];
 
-    echo $style;
-            
+    $shortcode_attributes = [
+        'limit' => $number_of_products,
+        'columns' => $columns
+    ];
 
-    $columns = (isset($settings['columns'])) ? absint($settings['columns']) : 4; // Defaults to 4 columns
-
-    $shortcode = '[products columns="%d" limit="%d"';
-
-    switch($settings['product_type']) {
+    // Append additional attributes based on the product type
+    switch ($product_type) {
         case 'best_sellers':
-            $shortcode .= ' best_selling="true"';
-            break;
-        case 'newest':
-            // Already the default behavior, nothing to add
+            $shortcode_attributes['best_selling'] = 'true';
             break;
         case 'on_sale':
-            $shortcode .= ' on_sale="true"';
+            $shortcode_attributes['on_sale'] = 'true';
             break;
         case 'featured':
-            $shortcode .= ' visibility="featured"';
+            $shortcode_attributes['visibility'] = 'featured';
             break;
         case 'categories':
             if (!empty($settings['product_categories'])) {
-                $cat_ids = implode(',', $settings['product_categories']);
-                $shortcode .= ' category="%s"';
+                $shortcode_attributes['category'] = implode(',', $settings['product_categories']);
             }
             break;
         case 'tags':
-                if (!empty($settings['product_tags'])) {
-                    $tag_slugs = implode(',', $settings['product_tags']);
-                    $shortcode .= ' tag="' . $tag_slugs . '"';
-                }
+            if (!empty($settings['product_tags'])) {
+                $shortcode_attributes['tag'] = implode(',', $settings['product_tags']);
+            }
             break;
         case 'attributes':
-                if (!empty($settings['product_attributes']) && !empty($settings['attribute_terms'])) {
-                    $attribute_terms = implode(',', $settings['attribute_terms']);
-                    $shortcode .= sprintf(' attribute="%s" terms="%s"', esc_attr($settings['product_attributes']), esc_attr($attribute_terms));
-                }
-                break;  
-        case 'specific_products':
-                if (!empty($settings['selected_products'])) {
-                    $selected_ids = implode(',', $settings['selected_products']);
-                    $shortcode .= ' ids="%s"';
-                }
-                break;                      
-    }
-
-    // Ensure the shortcode is closed with a bracket
-    if (isset($cat_ids)) {
-        $shortcode = sprintf($shortcode, $columns, $settings['number_of_products'], $cat_ids) . ']';
-    } elseif (isset($selected_ids)) { // New condition for specific products
-        $shortcode = sprintf($shortcode, $columns, $settings['number_of_products'], $selected_ids) . ']';
-    } else {
-        $shortcode = sprintf($shortcode, $columns, $settings['number_of_products']) . ']';
-    }
-                
-
-    echo do_shortcode($shortcode);
-
+            if (!empty($settings['product_attributes']) && !empty($settings['attribute_terms'])) {
+                $shortcode_attributes['attribute'] = $settings['product_attributes'];
+                $shortcode_attributes['terms'] = implode(',', $settings['attribute_terms']);
             }
+            break;
+        case 'specific_products':
+            if (!empty($settings['selected_products'])) {
+                $shortcode_attributes['ids'] = implode(',', $settings['selected_products']);
+            }
+            break;
+    }
 
+    $shortcode = '[products';
+    foreach ($shortcode_attributes as $attr => $value) {
+        $shortcode .= ' ' . $attr . '="' . esc_attr($value) . '"';
+    }
+    $shortcode .= ']';
+
+    echo do_shortcode($shortcode); // Execute the WooCommerce shortcode
+}
         }
 
-        \Elementor\Plugin::instance()->widgets_manager->register_widget_type(new Custom_WooCommerce_Elementor_Widget());
+        \Elementor\Plugin::instance()->widgets_manager->register_widget_type(new ibt_WooCommerce_Elementor_Widget());
     }
 }
 
 /**
  * Enqueue styles when editing or previewing in Elementor
  */
-function custom_woocommerce_elementor_widget_styles() {
+function ibt_elementor_widget_styles() {
     if (\Elementor\Plugin::$instance->editor->is_edit_mode() || \Elementor\Plugin::$instance->preview->is_preview_mode()) {
-        wp_enqueue_style('custom-woocommerce-elementor-widget-style', plugin_dir_url(dirname(__FILE__)) . 'css/style.css', [], '1.0');
+        wp_enqueue_style('ibt-woocommerce-elementor-widget-style', plugin_dir_url(dirname(__FILE__)) . 'css/style.css', [], '1.0');
     }
 }
-add_action('wp_enqueue_scripts', 'custom_woocommerce_elementor_widget_styles');
+add_action('wp_enqueue_scripts', 'ibt_elementor_widget_styles');
 
 /**
  * AJAX callback to retrieve WooCommerce attribute terms
  */
-function custom_get_attribute_terms_callback() {
+function ibt_get_attribute_terms_callback() {
+    check_ajax_referer('ibt_woo_elementor', 'nonce');
+
     if (isset($_POST['attribute_name'])) {
         $taxonomy = 'pa_' . sanitize_text_field($_POST['attribute_name']);
         $terms = get_terms($taxonomy);
@@ -408,9 +401,9 @@ function custom_get_attribute_terms_callback() {
             }
         }
 
-        echo json_encode($response);
+        echo wp_json_encode($response);
     }
     wp_die();
 }
-add_action('wp_ajax_get_attribute_terms', 'custom_get_attribute_terms_callback');
-add_action('wp_ajax_nopriv_get_attribute_terms', 'custom_get_attribute_terms_callback');
+add_action('wp_ajax_get_attribute_terms', 'ibt_get_attribute_terms_callback');
+add_action('wp_ajax_nopriv_get_attribute_terms', 'ibt_get_attribute_terms_callback');
