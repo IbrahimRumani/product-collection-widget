@@ -1,36 +1,41 @@
-/* Default WooCommerce Product Grid Styling */
-.products {
+/* Main styling for the WooCommerce Product Grid */
+.elementor-widget-ibt-woocommerce-products .products {
     display: grid;
-    grid-gap: 20px;
-    grid-template-columns: repeat(4, 1fr); /* This will be overridden by the PHP code for desktop */
+    grid-gap: 20px; /* Space between grid items */
+    grid-template-columns: repeat(4, 1fr); /* Default desktop layout */
 }
 
-/* Tablet */
+/* Responsive adjustments for tablets */
 @media (max-width: 1024px) and (min-width: 768px) {
-    .elementor-widget-custom-woocommerce-products .products {
-        grid-template-columns: repeat(3, 1fr); /* 3 as an example, adjust as needed */
+    .elementor-widget-ibt-woocommerce-products .products {
+        grid-template-columns: repeat(3, 1fr); /* Adjust for tablet screens */
     }
 }
 
-/* Mobile */
+/* Responsive adjustments for mobile devices */
 @media (max-width: 767px) {
-    .elementor-widget-custom-woocommerce-products .products {
-        grid-template-columns: repeat(2, 1fr); /* 2 as an example, adjust as needed */
+    .elementor-widget-ibt-woocommerce-products .products {
+        grid-template-columns: repeat(2, 1fr); /* Adjust for mobile screens */
     }
 }
 
-/* This CSS is to make sure the product images resize gracefully */
-.products .product {
+/* Styling for individual product items */
+.elementor-widget-ibt-woocommerce-products .products .product {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: space-between; /* Ensure spacing around items is consistent */
+    align-items: flex-start; /* Align items to the top */
 }
 
-.products .product img {
-    max-width: 100%;
-    height: auto;
+/* Ensure product images resize gracefully */
+.elementor-widget-ibt-woocommerce-products .products .product img {
+    max-width: 100%; /* Full width of the container */
+    height: auto; /* Maintain aspect ratio */
 }
 
-.products .product .woocommerce-loop-product__title {
-    margin: 10px 0;
+/* Styling for the product titles */
+.elementor-widget-ibt-woocommerce-products .products .product .woocommerce-loop-product__title {
+    margin: 10px 0; /* Space above and below the title */
 }
+
+/* Additional styling can be added below as needed */
