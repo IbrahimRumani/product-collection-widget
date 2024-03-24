@@ -1,11 +1,11 @@
 <?php
 /*
-Plugin Name: Product Collection Widget
+Plugin Name: Products Widget For Elementor
 Plugin URI: https://github.com/IbrahimRumani/product-collection-widget
-Description: A custom Elementor widget for displaying WooCommerce products in various configurations.
+Description: A custom Elementor widget for displaying WooCommerce products in Elementor Page Builder.
 Version: 1.0.0
 Requires at least: 5.5
-Tested up to: 6.3
+Tested up to: 6.3.0
 Requires PHP: 7.1
 Author: InfoBahn
 Author URI: https://infobahn.io?utm_source=wordpress&utm_medium=plugin_uri&utm_campaign=wc_elementor_plugin
@@ -20,16 +20,16 @@ if (!defined('ABSPATH')) {
 /**
  * Check for WooCommerce and Elementor's activation before initializing the plugin.
  */
-function ibt_check_required_plugins() {
+function ibtg_check_required_plugins() {
     // Checking if WooCommerce is active
     if (!in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
-        add_action('admin_notices', 'ibt_woocommerce_missing_notice');
+        add_action('admin_notices', 'ibtg_woocommerce_missing_notice');
         return;
     }
 
     // Checking if Elementor is active
     if (!in_array('elementor/elementor.php', apply_filters('active_plugins', get_option('active_plugins')))) {
-        add_action('admin_notices', 'ibt_elementor_missing_notice');
+        add_action('admin_notices', 'ibtg_elementor_missing_notice');
         return;
     }
 
@@ -40,20 +40,20 @@ function ibt_check_required_plugins() {
 /**
  * Admin notice for missing WooCommerce plugin
  */
-function ibt_woocommerce_missing_notice() {
+function ibtg_woocommerce_missing_notice() {
     echo '<div class="notice notice-warning is-dismissible">
-             <p>' . esc_html__('Product Collection Widget requires WooCommerce to be installed and active.', 'ibt-text-domain') . '</p>
+             <p>' . esc_html__('Product Collection Widget requires WooCommerce to be installed and active.', 'products-widget-for-elementor') . '</p>
          </div>';
 }
 
 /**
  * Admin notice for missing Elementor plugin
  */
-function ibt_elementor_missing_notice() {
+function ibtg_elementor_missing_notice() {
     echo '<div class="notice notice-warning is-dismissible">
-             <p>' . esc_html__('Product Collection Widget requires Elementor to be installed and active.', 'ibt-text-domain') . '</p>
+             <p>' . esc_html__('Product Collection Widget requires Elementor to be installed and active.', 'products-widget-for-elementor') . '</p>
          </div>';
 }
 
 // Hook into plugins_loaded to check for required plugins
-add_action('plugins_loaded', 'ibt_check_required_plugins');
+add_action('plugins_loaded', 'ibtg_check_required_plugins');
