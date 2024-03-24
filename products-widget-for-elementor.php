@@ -5,7 +5,7 @@ Plugin URI: https://github.com/IbrahimRumani/product-collection-widget
 Description: A custom Elementor widget for displaying WooCommerce products in Elementor Page Builder.
 Version: 1.0.0
 Requires at least: 5.5
-Tested up to: 6.3.0
+Tested up to: 6.4.3
 Requires PHP: 7.1
 Author: InfoBahn
 Author URI: https://infobahn.io?utm_source=wordpress&utm_medium=plugin_uri&utm_campaign=wc_elementor_plugin
