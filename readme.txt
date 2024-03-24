@@ -23,7 +23,7 @@ This plugin provides a new widget for the Elementor page builder that allows use
 
 == Installation ==
 
-1. Upload the `product-collection-widget` folder to the `/wp-content/plugins/` directory.
+1. Upload the `products-widget-for-elementor` folder to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Ensure you have both WooCommerce and Elementor installed and activated.
 4. Use the new widget within the Elementor editor.
