@@ -5,23 +5,23 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
 /**
  * Register Custom WooCommerce Widget for Elementor
  */
-add_action('elementor/widgets/widgets_registered', 'ibt_register_woocommerce_widget');
+add_action('elementor/widgets/widgets_registered', 'ibtg_register_woocommerce_widget');
 
-function ibt_register_woocommerce_widget() {
+function ibtg_register_woocommerce_widget() {
     if (!did_action('elementor/loaded')) {
         return;
     }
 
     if (class_exists('\Elementor\Widget_Base')) {
 
-        class ibt_WooCommerce_Elementor_Widget extends \Elementor\Widget_Base {
+        class ibtg_WooCommerce_Elementor_Widget extends \Elementor\Widget_Base {
 
             public function get_name() {
                 return 'ibt-woocommerce-products';
             }
 
             public function get_title() {
-                return esc_html__('Product Collections', 'ibt-text-domain');
+                return esc_html__('Product Collections', 'products-widget-for-elementor');
             }
 
             public function get_icon() {
@@ -35,13 +35,13 @@ function ibt_register_woocommerce_widget() {
             protected function _register_controls() {
                 // Enqueue and localize the JavaScript for this control
                 wp_enqueue_script('ibt-woocommerce-elementor-ajax', plugin_dir_url(dirname(__FILE__)) . 'js/ajax.js', ['jquery'], '1.0', true);
-                wp_localize_script('ibt-woocommerce-elementor-ajax', 'ibtWooElementor', ['ajaxurl' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('ibt_woo_elementor')]);
+                wp_localize_script('ibt-woocommerce-elementor-ajax', 'ibtWooElementor', ['ajaxurl' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('ibtg_woo_elementor')]);
 
                 // [Add controls here - Example control added]
                 $this->start_controls_section(
                     'content_section',
                     [
-                        'label' => esc_html__('Settings', 'ibt-text-domain'),
+                        'label' => esc_html__('Settings', 'products-widget-for-elementor'),
                         'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
                     ]
                 );
@@ -49,7 +49,7 @@ function ibt_register_woocommerce_widget() {
                 $this->add_control(
                     'number_of_products',
                     [
-                        'label' => esc_html__('Number of Products', 'ibt-text-domain'),
+                        'label' => esc_html__('Number of Products', 'products-widget-for-elementor'),
                         'type' => \Elementor\Controls_Manager::NUMBER,
                         'min' => 1,
                         'max' => 100,
@@ -60,7 +60,7 @@ function ibt_register_woocommerce_widget() {
 $this->add_responsive_control(
                     'columns',
                     [
-                        'label' => __('Columns', 'text-domain'),
+                        'label' => __('Columns', 'products-widget-for-elementor'),
                         'type' => \Elementor\Controls_Manager::SELECT,
                         'default' => '4',
                         'options' => [
@@ -80,18 +80,18 @@ $this->add_responsive_control(
                 $this->add_control(
                     'product_type',
                     [
-                        'label' => __('Product Type', 'text-domain'),
+                        'label' => __('Product Type', 'products-widget-for-elementor'),
                         'type' => \Elementor\Controls_Manager::SELECT,
                         'default' => 'newest',
                         'options' => [
-                            'best_sellers' => __('Best Sellers', 'text-domain'),
-                            'newest' => __('Newest', 'text-domain'),
-                            'on_sale' => __('On Sale', 'text-domain'),
-                            'featured' => __('Featured', 'text-domain'),
-                            'categories' => __('Categories', 'text-domain'),
-                            'tags' => __('Tags', 'text-domain'),
-                            'attributes' => __('Attributes', 'text-domain'),
-                            'specific_products' => __('Specific Products', 'text-domain'),
+                            'best_sellers' => __('Best Sellers', 'products-widget-for-elementor'),
+                            'newest' => __('Newest', 'products-widget-for-elementor'),
+                            'on_sale' => __('On Sale', 'products-widget-for-elementor'),
+                            'featured' => __('Featured', 'products-widget-for-elementor'),
+                            'categories' => __('Categories', 'products-widget-for-elementor'),
+                            'tags' => __('Tags', 'products-widget-for-elementor'),
+                            'attributes' => __('Attributes', 'products-widget-for-elementor'),
+                            'specific_products' => __('Specific Products', 'products-widget-for-elementor'),
                         ]
                     ]
                 );
@@ -100,13 +100,13 @@ $this->add_responsive_control(
                 $categories_array = [];
                 $categories = get_terms('product_cat');
                 foreach($categories as $category) {
-                    $categories_array[$category->term_id] = $category->name;
+                    $categories_array[$category->term_id] = esc_html($category->name);
                 }
 
                 $this->add_control(
                     'product_categories',
                     [
-                        'label' => __('Select Categories', 'text-domain'),
+                        'label' => __('Select Categories', 'products-widget-for-elementor'),
                         'type' => \Elementor\Controls_Manager::SELECT2,
                         'multiple' => true,
                         'label_block' => true,
@@ -122,14 +122,14 @@ $this->add_responsive_control(
                 $tags = get_terms('product_tag');
                 if (!is_wp_error($tags)) {
                     foreach($tags as $tag) {
-                        $tags_array[$tag->slug] = $tag->name;
+                        $tags_array[$tag->slug] = esc_html($tag->name);
                     }
                 }
 
                 $this->add_control(
                     'product_tags',
                     [
-                        'label' => __('Select Tags', 'text-domain'),
+                        'label' => __('Select Tags', 'products-widget-for-elementor'),
                         'type' => \Elementor\Controls_Manager::SELECT2,
                         'multiple' => true,
                         'label_block' => true,
@@ -150,7 +150,7 @@ $this->add_responsive_control(
                 $this->add_control(
                     'product_attributes',
                     [
-                        'label' => __('Select Attribute', 'text-domain'),
+                        'label' => __('Select Attribute', 'products-widget-for-elementor'),
                         'type' => \Elementor\Controls_Manager::SELECT,
                         'options' => $attributes_array,
                         'condition' => [
@@ -162,7 +162,7 @@ $this->add_responsive_control(
                 $this->add_control(
                     'attribute_terms',
                     [
-                        'label' => __('Select Attribute Terms', 'text-domain'),
+                        'label' => __('Select Attribute Terms', 'products-widget-for-elementor'),
                         'type' => \Elementor\Controls_Manager::SELECT2,
                         'multiple' => true,
                         'label_block' => true,
@@ -185,7 +185,7 @@ $this->add_responsive_control(
                 $this->add_control(
                     'selected_products',
                     [
-                        'label' => __('Select Products', 'text-domain'),
+                        'label' => __('Select Products', 'products-widget-for-elementor'),
                         'type' => \Elementor\Controls_Manager::SELECT2,
                         'multiple' => true,
                         'label_block' => true,
@@ -201,10 +201,10 @@ $this->add_responsive_control(
                 $this->add_control(
                     'show_title',
                     [
-                        'label' => __('Show Title', 'text-domain'),
+                        'label' => __('Show Title', 'products-widget-for-elementor'),
                         'type' => \Elementor\Controls_Manager::SWITCHER,
-                        'label_on' => __('Yes', 'text-domain'),
-                        'label_off' => __('No', 'text-domain'),
+                        'label_on' => __('Yes', 'products-widget-for-elementor'),
+                        'label_off' => __('No', 'products-widget-for-elementor'),
                         'return_value' => 'yes',
                         'default' => 'yes',
                     ]
@@ -214,10 +214,10 @@ $this->add_responsive_control(
                 $this->add_control(
                     'show_price',
                     [
-                        'label' => __('Show Price', 'text-domain'),
+                        'label' => __('Show Price', 'products-widget-for-elementor'),
                         'type' => \Elementor\Controls_Manager::SWITCHER,
-                        'label_on' => __('Yes', 'text-domain'),
-                        'label_off' => __('No', 'text-domain'),
+                        'label_on' => __('Yes', 'products-widget-for-elementor'),
+                        'label_off' => __('No', 'products-widget-for-elementor'),
                         'return_value' => 'yes',
                         'default' => 'yes',
                     ]
@@ -227,10 +227,10 @@ $this->add_responsive_control(
                 $this->add_control(
                     'show_add_to_cart',
                     [
-                        'label' => __('Show Add to Cart', 'text-domain'),
+                        'label' => __('Show Add to Cart', 'products-widget-for-elementor'),
                         'type' => \Elementor\Controls_Manager::SWITCHER,
-                        'label_on' => __('Yes', 'text-domain'),
-                        'label_off' => __('No', 'text-domain'),
+                        'label_on' => __('Yes', 'products-widget-for-elementor'),
+                        'label_off' => __('No', 'products-widget-for-elementor'),
                         'return_value' => 'yes',
                         'default' => 'yes',
                     ]
@@ -239,10 +239,10 @@ $this->add_responsive_control(
                 $this->add_control(
                     'hide_sale_badge',
                     [
-                        'label' => __('Hide Sale Badge', 'text-domain'),
+                        'label' => __('Hide Sale Badge', 'products-widget-for-elementor'),
                         'type' => \Elementor\Controls_Manager::SWITCHER,
-                        'label_on' => __('Yes', 'text-domain'),
-                        'label_off' => __('No', 'text-domain'),
+                        'label_on' => __('Yes', 'products-widget-for-elementor'),
+                        'label_off' => __('No', 'products-widget-for-elementor'),
                         'return_value' => 'yes',
                         'default' => 'no',
                     ]
@@ -252,19 +252,19 @@ $this->add_responsive_control(
                 $this->add_responsive_control(
                     'content_align',
                     [
-                        'label' => __( 'Alignment', 'text-domain' ),
+                        'label' => __( 'Alignment', 'products-widget-for-elementor' ),
                         'type' => \Elementor\Controls_Manager::CHOOSE,
                         'options' => [
                             'left'    => [
-                                'title' => __( 'Left', 'text-domain' ),
+                                'title' => __( 'Left', 'products-widget-for-elementor' ),
                                 'icon' => 'eicon-text-align-left',
                             ],
                             'center' => [
-                                'title' => __( 'Center', 'text-domain' ),
+                                'title' => __( 'Center', 'products-widget-for-elementor' ),
                                 'icon' => 'eicon-text-align-center',
                             ],
                             'right' => [
-                                'title' => __( 'Right', 'text-domain' ),
+                                'title' => __( 'Right', 'products-widget-for-elementor' ),
                                 'icon' => 'eicon-text-align-right',
                             ],
                         ],
@@ -370,25 +370,25 @@ protected function render() {
 }
         }
 
-        \Elementor\Plugin::instance()->widgets_manager->register_widget_type(new ibt_WooCommerce_Elementor_Widget());
+        \Elementor\Plugin::instance()->widgets_manager->register_widget_type(new ibtg_WooCommerce_Elementor_Widget());
     }
 }
 
 /**
  * Enqueue styles when editing or previewing in Elementor
  */
-function ibt_elementor_widget_styles() {
+function ibtg_elementor_widget_styles() {
     if (\Elementor\Plugin::$instance->editor->is_edit_mode() || \Elementor\Plugin::$instance->preview->is_preview_mode()) {
         wp_enqueue_style('ibt-woocommerce-elementor-widget-style', plugin_dir_url(dirname(__FILE__)) . 'css/style.css', [], '1.0');
     }
 }
-add_action('wp_enqueue_scripts', 'ibt_elementor_widget_styles');
+add_action('wp_enqueue_scripts', 'ibtg_elementor_widget_styles');
 
 /**
  * AJAX callback to retrieve WooCommerce attribute terms
  */
-function ibt_get_attribute_terms_callback() {
-    check_ajax_referer('ibt_woo_elementor', 'nonce');
+function ibtg_get_attribute_terms_callback() {
+    check_ajax_referer('ibtg_woo_elementor', 'nonce');
 
     if (isset($_POST['attribute_name'])) {
         $taxonomy = 'pa_' . sanitize_text_field($_POST['attribute_name']);
@@ -405,5 +405,5 @@ function ibt_get_attribute_terms_callback() {
     }
     wp_die();
 }
-add_action('wp_ajax_get_attribute_terms', 'ibt_get_attribute_terms_callback');
-add_action('wp_ajax_nopriv_get_attribute_terms', 'ibt_get_attribute_terms_callback');
+add_action('wp_ajax_get_attribute_terms', 'ibtg_get_attribute_terms_callback');
+add_action('wp_ajax_nopriv_get_attribute_terms', 'ibtg_get_attribute_terms_callback');
