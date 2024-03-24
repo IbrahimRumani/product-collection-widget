@@ -2,13 +2,13 @@
 Contributors: infobahntechnologies
 Tags: elementor, woocommerce, widget
 Requires at least: 5.5
-Tested up to: 6.3
+Tested up to: 6.4.3
 Requires PHP: 7.1
 Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-A custom Elementor widget for displaying WooCommerce products in various configurations.
+A custom Elementor widget for displaying WooCommerce products in Elementor Page Builder
 
 == Description ==
 
