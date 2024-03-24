@@ -4,12 +4,12 @@ jQuery(document).ready(function($) {
         var attribute_name = $(this).val();
 
         $.ajax({
-            url: ibtWooElementor.ajaxurl,
+            url: ibtgWooElementor.ajaxurl,
             method: 'POST',
             data: {
                 'action': 'get_attribute_terms',
                 'attribute_name': attribute_name,
-                'nonce': ibtWooElementor.nonce // Include the nonce in the AJAX request for security
+                'nonce': ibtgWooElementor.nonce // Include the nonce in the AJAX request for security
             },
             success: function(response) {
                 // Validate response format
