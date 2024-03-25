@@ -8,18 +8,19 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-A custom Elementor widget for displaying WooCommerce products in Elementor Page Builder
+An Elementor widget to display WooCommerce products in Elementor Page Builder
 
 == Description ==
 
-This plugin provides a new widget for the Elementor page builder that allows users to display WooCommerce products in a variety of layouts and formats. Users can select product types like best sellers, newest products, products on sale, and so on. They can also choose to display products from specific categories, tags, or attributes.
+This plugin provides a new products widget for the Elementor page builder that allows users to display WooCommerce products in a variety of layouts and formats with multiple product selection options. 
 
 == Features ==
 
-* Multiple product type selection options
-* Supports columns layout configuration
+* Select products by Categories (One or more), Tags, Attributes, Featured, On Sale, Best Sellers or even select specific products
+* Supports different columns layout configuration for desktop, tablet & mobile
 * Compatible with the latest WooCommerce and Elementor versions
 * Easy-to-use settings for users of all experience levels
+* Styling options must be handled via the themes
 
 == Installation ==
 
@@ -38,6 +39,10 @@ Yes, this plugin requires both WooCommerce and Elementor to be installed and act
 
 No, this widget is designed specifically to display WooCommerce products.
 
+= Why do I not see a style section? =
+
+You can modify the style from the themes' customiser to maintain a uniform look across the website. There is no style tab in this widget. 
+
 
 == Changelog ==
 
@@ -52,4 +57,5 @@ Initial release.
 == Additional Information ==
 
 This plugin was created with the help of ChatGPT-4.
+The plugin just simply uses the standard WooCommerce shortcode to display products based on your selection and hence will never impact performance. You can call this a WooCommerce shortcode GUI.
 For additional information or queries, please reach out to support@infobahn.io
