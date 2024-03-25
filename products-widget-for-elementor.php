@@ -2,7 +2,7 @@
 /*
 Plugin Name: Products Widget For Elementor
 Plugin URI: https://github.com/IbrahimRumani/product-collection-widget
-Description: A custom Elementor widget for displaying WooCommerce products in Elementor Page Builder.
+Description: A simple Elementor widget to display WooCommerce products in Elementor Page Builder
 Version: 1.0.0
 Requires at least: 5.5
 Tested up to: 6.4.3
